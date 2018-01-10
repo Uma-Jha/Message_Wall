@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>The Wall</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+  		<div class="navbar-header">
+    		<a class="navbar-brand" href="#">Coding Dojo Wall</a>
+  		</div>
+  		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    		<ul class="nav navbar-nav navbar-right">
+    			<li class="align">Welcome {{session['name']}}</li>
+    			<li>
+    				<form class="navbar-form navbar-right form-align" action="/logout" method="post">
+  						<input type="submit" class="text-button" value="Logout"/>
+  					</form>
+  				</li>
+  			</ul>
+  		</div>
+	</nav>	
+	<div class="container-fluid bg">
+		{% with messages = get_flashed_messages(with_categories=true) %}
+  		{% if messages %}
+    	{% for category, message in messages %}
+      	<div class="alert alert-{{ category }} alert-dismissible" role="alert">
+      	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+     	{{ message }}
+      	</div>
+    	{% endfor %}
+  		{% endif %}
+		{% endwith %}
+		<form action="/add_message" method="post">
+			<div class="row">
+				<div class="col-md-9 col-md-offset-1">
+					<div class='form-group'>
+				        <h4>Post a message</h4>
+				        <textarea class="form-control" rows="3" name='message'></textarea>
+		        	</div>
+				</div>
+				<div class="col-md-2"></div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-md-offset-8">
+					<input type="submit" value="Post a message" class="btn btn-primary btn-block">
+				<div class="col-md-2"></div>
+			</div>
+		</form>
+		{% for msg in messages%}
+		<div class="row">
+			<div class="col-md-9 col-md-offset-1 size">
+				<p>{{msg['first_name']}} {{msg['last_name']}} - {{msg['created_at'].strftime('%b %d %Y')}}</p>
+				<p>{{msg['message']}}</p>
+				{% if msg['user_id']==session['id'] %}
+				<form action="/delete/{{msg['id']}}" method="post">
+					<input type="submit" value="Delete" class="btn btn-primary pad">
+				</form>
+				{% endif %}
+			</div>
+			<div class="col-md-2"></div>
+		</div>
+		{% for com in comments%}
+		{% if com['message_id']==msg['id'] %}
+		<div class="row">
+			<div class="col-md-9 col-md-offset-1 size">
+				<p>{{com['first_name']}} {{com['last_name']}} - {{com['created_at'].strftime('%b %d %Y')}}</p>
+				<p>{{com['comment']}}</p>
+			</div>
+			<div class="col-md-2"></div>
+		</div>
+		{% endif %}
+		{% endfor %}
+		<div class="row">
+			<div class="col-md-9 col-md-offset-1">
+				<form action="/add_comment/{{msg['id']}}" method="post">
+					<div class='form-group'>
+        				<h4>Post a comment</h4>
+        				<textarea class="form-control" rows="3" name='comment'></textarea>
+        			</div>
+        			<input type="submit" value="Post a comment" class="btn btn-primary wide col-md-2 col-md-offset-10">
+        		</form>
+			</div>
+			<div class="col-md-2"></div>	
+		</div>
+		{% endfor %}
+	</div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
